@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 5f;
     public float jumpForce = 7f;
 
-    [Header("Jump Settings")]
+    [Header("Jump")]
     public int maxJumps = 2;
 
     [Header("Dash")]
@@ -23,18 +23,18 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
 
+    private float moveInput;
+    private int jumpCount;
+
     private bool isGrounded;
+    private bool isFacingRight = true;
+
     private bool isDashing;
     private bool canDash = true;
 
-    private float moveInput;
-    private bool isFacingRight = true;
-    private float attackPointStartX;
-
     private float lastTapA;
     private float lastTapD;
-
-    private int jumpCount;
+    private float attackPointStartX;
 
     void Start()
     {
@@ -42,20 +42,19 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         if (spriteRenderer == null)
-        {
             spriteRenderer = GetComponent<SpriteRenderer>();
-        }
 
         if (attackPoint != null)
-        {
             attackPointStartX = Mathf.Abs(attackPoint.localPosition.x);
-        }
+
+        // Important: make sure player is not frozen
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.simulated = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     void Update()
     {
-        if (isDashing) return;
-
         moveInput = Input.GetAxisRaw("Horizontal");
 
         HandleFlip();
@@ -78,18 +77,12 @@ public class PlayerController : MonoBehaviour
     {
         if (isDashing) return;
 
-        Move();
-    }
-
-    void Move()
-    {
         rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
     }
 
     void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-
         jumpCount++;
         isGrounded = false;
     }
@@ -125,20 +118,15 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
 
         if (direction > 0 && !isFacingRight)
-        {
             Flip();
-        }
-        else if (direction < 0 && isFacingRight)
-        {
+
+        if (direction < 0 && isFacingRight)
             Flip();
-        }
 
         if (animator != null)
-        {
             animator.SetTrigger("Dash");
-        }
 
-        rb.linearVelocity = new Vector2(direction * dashSpeed, 0f);
+        rb.linearVelocity = new Vector2(direction * dashSpeed, rb.linearVelocity.y);
 
         yield return new WaitForSeconds(dashDuration);
 
@@ -152,13 +140,10 @@ public class PlayerController : MonoBehaviour
     void HandleFlip()
     {
         if (moveInput > 0 && !isFacingRight)
-        {
             Flip();
-        }
-        else if (moveInput < 0 && isFacingRight)
-        {
+
+        if (moveInput < 0 && isFacingRight)
             Flip();
-        }
     }
 
     void Flip()
@@ -166,24 +151,18 @@ public class PlayerController : MonoBehaviour
         isFacingRight = !isFacingRight;
 
         if (spriteRenderer != null)
-        {
             spriteRenderer.flipX = !isFacingRight;
-        }
 
         if (attackPoint != null)
         {
-            Vector3 newAttackPointPosition = attackPoint.localPosition;
+            Vector3 pos = attackPoint.localPosition;
 
             if (isFacingRight)
-            {
-                newAttackPointPosition.x = attackPointStartX;
-            }
+                pos.x = attackPointStartX;
             else
-            {
-                newAttackPointPosition.x = -attackPointStartX;
-            }
+                pos.x = -attackPointStartX;
 
-            attackPoint.localPosition = newAttackPointPosition;
+            attackPoint.localPosition = pos;
         }
     }
 

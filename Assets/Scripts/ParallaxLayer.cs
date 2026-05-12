@@ -5,11 +5,12 @@ public class ParallaxLayer : MonoBehaviour
     [Header("Camera")]
     public Transform cameraTransform;
 
-    [Header("Parallax Settings")]
+    [Header("Parallax Amount")]
     [Range(0f, 1f)]
-    public float parallaxFactor = 0.5f;
+    public float parallaxX = 0.3f;
 
-    public bool parallaxY = false;
+    [Range(0f, 1f)]
+    public float parallaxY = 0f;
 
     private Vector3 startPosition;
     private Vector3 cameraStartPosition;
@@ -27,15 +28,10 @@ public class ParallaxLayer : MonoBehaviour
 
     void LateUpdate()
     {
-        Vector3 cameraMovement = cameraTransform.position - cameraStartPosition;
+        Vector3 cameraDelta = cameraTransform.position - cameraStartPosition;
 
-        float newX = startPosition.x + cameraMovement.x * parallaxFactor;
-        float newY = startPosition.y;
-
-        if (parallaxY)
-        {
-            newY = startPosition.y + cameraMovement.y * parallaxFactor;
-        }
+        float newX = startPosition.x + cameraDelta.x * parallaxX;
+        float newY = startPosition.y + cameraDelta.y * parallaxY;
 
         transform.position = new Vector3(newX, newY, startPosition.z);
     }
