@@ -1,0 +1,12 @@
+{
+    "asset": "fa1f7d676382f5149aacc7a3b84c47d1",
+    "fileName": "019e2bca-888f-778a-856e-acb49878bbe6_Preview.jpg",
+    "prompt": "forest ground tileset, grass top, dirt soil bottom, pixel art style, 2D platformer assets, game tiles, stone and root details",
+    "negativePrompt": "",
+    "model": "hand-painted-textures-2-0",
+    "modelName": "Hand Painted Textures 2.0",
+    "customSeed": 918934406,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation"
+}

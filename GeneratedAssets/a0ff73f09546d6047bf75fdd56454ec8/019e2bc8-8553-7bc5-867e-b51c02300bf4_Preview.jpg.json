@@ -1,0 +1,12 @@
+{
+    "asset": "a0ff73f09546d6047bf75fdd56454ec8",
+    "fileName": "019e2bc8-8553-7bc5-867e-b51c02300bf4_Preview.jpg",
+    "prompt": "tileable mountain range silhouette, pixel art style, deep blue and purple hues, far distance atmosphere, 2D side-scroller background layer",
+    "negativePrompt": "",
+    "model": "hand-painted-textures-2-0",
+    "modelName": "Hand Painted Textures 2.0",
+    "customSeed": 1598824701,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation"
+}

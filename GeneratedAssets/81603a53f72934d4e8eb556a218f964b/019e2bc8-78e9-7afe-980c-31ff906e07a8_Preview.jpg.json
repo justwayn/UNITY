@@ -1,0 +1,12 @@
+{
+    "asset": "81603a53f72934d4e8eb556a218f964b",
+    "fileName": "019e2bc8-78e9-7afe-980c-31ff906e07a8_Preview.jpg",
+    "prompt": "tileable forest tree line, pixel art style, mid distance, atmospheric haze, green and teal hues, 2D side-scroller background layer",
+    "negativePrompt": "",
+    "model": "hand-painted-textures-2-0",
+    "modelName": "Hand Painted Textures 2.0",
+    "customSeed": 426446537,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation"
+}

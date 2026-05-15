@@ -1,0 +1,98 @@
+using UnityEngine;
+
+public class PlayerCombat : MonoBehaviour
+{
+    [Header("Attack Settings")]
+    public Transform attackPoint;
+    public float attackRange = 1f;
+    public LayerMask enemyLayer;
+    public int damage = 1;
+    public float attackCooldown = 0.5f;
+
+    [Header("Animation")]
+    public Animator animator;
+
+    private float nextAttackTime;
+
+
+    void Awake()
+    {
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+    }
+
+    void Update()
+    {
+        // Attack 1 (Left Click)
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
+        {
+            Attack(0);
+            nextAttackTime = Time.time + attackCooldown;
+        }
+
+        // Attack 2 (Right Click)
+        if (Input.GetMouseButtonDown(1) && Time.time >= nextAttackTime)
+        {
+            Attack(1);
+            nextAttackTime = Time.time + attackCooldown;
+        }
+    }
+
+    void Attack(int step)
+    {
+        if (step == 0)
+        {
+            animator.ResetTrigger("Attack1");
+            animator.SetTrigger("Attack");
+        }
+        else
+        {
+            animator.ResetTrigger("Attack");
+            animator.SetTrigger("Attack1");
+        }
+    }
+
+    // Call this using Animation Event
+    public void DealAttackDamage()
+    {
+        Debug.Log("Player attack damage triggered");
+        if (attackPoint == null)
+        {
+            Debug.LogWarning("AttackPoint is missing.");
+            return;
+        }
+
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(
+            attackPoint.position,
+            attackRange,
+            enemyLayer
+        );
+
+        foreach (Collider2D enemy in enemies)
+        {
+            // Support both script types and check in parents (in case collider is on a child)
+            Enemy e = enemy.GetComponentInParent<Enemy>();
+            if (e != null)
+            {
+                e.TakeDamage(damage);
+                continue;
+            }
+
+            EnemyHealth eh = enemy.GetComponentInParent<EnemyHealth>();
+            if (eh != null)
+            {
+                eh.TakeDamage(damage);
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+}

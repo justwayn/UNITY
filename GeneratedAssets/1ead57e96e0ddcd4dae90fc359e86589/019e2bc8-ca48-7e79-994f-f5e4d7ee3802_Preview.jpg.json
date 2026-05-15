@@ -1,0 +1,12 @@
+{
+    "asset": "1ead57e96e0ddcd4dae90fc359e86589",
+    "fileName": "019e2bc8-ca48-7e79-994f-f5e4d7ee3802_Preview.jpg",
+    "prompt": "tileable stylized clouds, pixel art style, blue sky background, soft lighting, 2D side-scroller background layer",
+    "negativePrompt": "",
+    "model": "hand-painted-textures-2-0",
+    "modelName": "Hand Painted Textures 2.0",
+    "customSeed": 2002076173,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation"
+}

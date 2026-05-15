@@ -1,0 +1,12 @@
+{
+    "asset": "14ca21cb481212f4a8de1e9d33608915",
+    "fileName": "019e2bd7-8919-728c-aaf5-00e618e89082_Preview.jpg",
+    "prompt": "stylized forest floor tileset, mossy green grass top, rich brown soil with roots, stone path details, tileable 2D platformer art, pixel art style 32x32 tiles",
+    "negativePrompt": "",
+    "model": "hand-painted-textures-2-0",
+    "modelName": "Hand Painted Textures 2.0",
+    "customSeed": 1987894741,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation"
+}

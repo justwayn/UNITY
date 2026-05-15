@@ -1,0 +1,12 @@
+{
+    "asset": "3d688026e2c232c4b8a59ca9a52c2b73",
+    "fileName": "019e2bd9-7132-7043-903b-2a366248556b_Preview.jpg",
+    "prompt": "2D side-scroller platformer forest tileset, grass top, dirt soil, pixel art style, high contrast, clean edges, tileable blocks, stone and moss details, high quality game asset",
+    "negativePrompt": "",
+    "model": "hand-painted-textures-2-0",
+    "modelName": "Hand Painted Textures 2.0",
+    "customSeed": 449642759,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation"
+}
