@@ -115,3 +115,9 @@ Build
 Builds/
 Packages/com.unity.ai.assistant/
 *.exe
+Packages/com.unity.ai.assistant/RelayApp~/
+Packages/com.unity.ai.assistant/RelayApp~/
+Library/
+Temp/
+Build/
+Builds/
