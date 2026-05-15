@@ -105,3 +105,13 @@ InitTestScene*.unity*
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
 Packages/com.unity.ai.assistant/
+Library/
+Temp
+Packages/com.unity.ai.assistant/
+echo Library
+Temp/
+Temp/
+Build
+Builds/
+Packages/com.unity.ai.assistant/
+*.exe
