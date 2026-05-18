@@ -400,7 +400,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 109064123}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dda643b971665b41b5266e6221e5521, type: 3}
   m_Name: 
@@ -445,7 +445,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 109064123}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f90dfd9985607d4eb7ea4cdc4728fc8, type: 3}
   m_Name: 
@@ -456,7 +456,6 @@ MonoBehaviour:
   dashSpeed: 16
   dashDuration: 0.15
   dashCooldown: 0.5
-  doubleTapTime: 0.25
   spriteRenderer: {fileID: 109064133}
   attackPoint: {fileID: 384104075}
 --- !u!114 &109064132
@@ -566,24 +565,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59dc76fade2630479619b29230094e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovements
-  _inputX: 0
-  _inputY: 0
-  _speed: 8
-  _rb: {fileID: 109064126}
-  _spriteRenderer: {fileID: 109064133}
-  _boxCollider: {fileID: 109064125}
-  _animator: {fileID: 109064124}
-  _groundCheck: {fileID: 0}
-  _groundLayer:
+  rb: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  boxCollider: {fileID: 0}
+  animator: {fileID: 0}
+  groundLayer:
     serializedVersion: 2
-    m_Bits: 128
-  _colliderChecker: 1
-  _jumpCounter: 0
-  dodgeForce: 20
-  dodgeDuration: 0.2
-  dodgeCooldown: 1
-  comboStep: 0
-  comboTimer: 0
+    m_Bits: 0
+  attackPoint: {fileID: 0}
+  speed: 7
+  jumpForce: 15
+  groundCheckRadius: 0.3
+  dashSpeed: 60
+  dashDuration: 0.3
+  dashCooldown: 0.5
+  attackRange: 2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  damage: 1
   comboResetTime: 5
 --- !u!114 &109064136
 MonoBehaviour:
@@ -3305,6 +3305,63 @@ Transform:
   - {fileID: 90563523}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.629}
+--- !u!1001 &2012008302
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -31.194258
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.0169854
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 195345529663672955, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5731778126120334604, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
+      propertyPath: m_Name
+      value: OwlEnemy
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b33669fbe91aa944ba8d81b99a72d281, type: 3}
 --- !u!1 &2136217029
 GameObject:
   m_ObjectHideFlags: 0
@@ -3426,3 +3483,4 @@ SceneRoots:
   - {fileID: 1410738123}
   - {fileID: 564056842}
   - {fileID: 2001141740}
+  - {fileID: 2012008302}

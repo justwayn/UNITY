@@ -72,7 +72,7 @@ public class PlayerCombat : MonoBehaviour
 
         foreach (Collider2D enemy in enemies)
         {
-            // Support both script types and check in parents (in case collider is on a child)
+            // Try different health/AI components
             Enemy e = enemy.GetComponentInParent<Enemy>();
             if (e != null)
             {
@@ -84,6 +84,21 @@ public class PlayerCombat : MonoBehaviour
             if (eh != null)
             {
                 eh.TakeDamage(damage);
+                continue;
+            }
+
+            CrystalEnemyAI ce = enemy.GetComponentInParent<CrystalEnemyAI>();
+            if (ce != null)
+            {
+                ce.TakeDamage(damage);
+                continue;
+            }
+
+            TentacleBossAI tb = enemy.GetComponentInParent<TentacleBossAI>();
+            if (tb != null)
+            {
+                tb.TakeDamage(damage);
+                continue;
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -11,10 +11,9 @@ public class PlayerController : MonoBehaviour
     public int maxJumps = 2;
 
     [Header("Dash")]
-    public float dashSpeed = 14f;
-    public float dashDuration = 0.15f;
+    public float dashSpeed = 20f;
+    public float dashDuration = 0.2f;
     public float dashCooldown = 0.5f;
-    public float doubleTapTime = 0.25f;
 
     [Header("Flip Settings")]
     public SpriteRenderer spriteRenderer;
@@ -32,8 +31,6 @@ public class PlayerController : MonoBehaviour
     private bool isDashing;
     private bool canDash = true;
 
-    private float lastTapA;
-    private float lastTapD;
     private float attackPointStartX;
 
     void Start()
@@ -41,13 +38,16 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
+        if (speed <= 0) speed = 5f;
+        if (dashSpeed <= 0) dashSpeed = 20f;
+        if (dashDuration <= 0) dashDuration = 0.2f;
+
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (attackPoint != null)
             attackPointStartX = Mathf.Abs(attackPoint.localPosition.x);
 
-        // Important: make sure player is not frozen
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.simulated = true;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isJumping", !isGrounded);
         }
 
-        HandleDoubleTapDash();
+        HandleDash();
 
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
         {
@@ -87,28 +87,17 @@ public class PlayerController : MonoBehaviour
         isGrounded = false;
     }
 
-    void HandleDoubleTapDash()
+    void HandleDash()
     {
         if (!canDash) return;
 
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
-            if (Time.time - lastTapD <= doubleTapTime)
-            {
-                StartCoroutine(Dash(1));
-            }
+            int direction = isFacingRight ? 1 : -1;
+            if (moveInput > 0) direction = 1;
+            else if (moveInput < 0) direction = -1;
 
-            lastTapD = Time.time;
-        }
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            if (Time.time - lastTapA <= doubleTapTime)
-            {
-                StartCoroutine(Dash(-1));
-            }
-
-            lastTapA = Time.time;
+            StartCoroutine(Dash(direction));
         }
     }
 
@@ -117,23 +106,37 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
 
-        if (direction > 0 && !isFacingRight)
-            Flip();
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        
+        // Use a fixed force/velocity for the dash
+        // We set high velocity and maintain it throughout the duration
+        Vector2 dashVelocity = new Vector2(direction * dashSpeed, 0f);
+        
+        if (animator != null)
+        {
+            animator.SetBool("isDodging", true);
+            animator.SetTrigger("Dash");
+        }
 
-        if (direction < 0 && isFacingRight)
-            Flip();
+        float elapsed = 0;
+        while (elapsed < dashDuration)
+        {
+            rb.linearVelocity = dashVelocity; // Force velocity every frame
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
 
         if (animator != null)
-            animator.SetTrigger("Dash");
+        {
+            animator.SetBool("isDodging", false);
+        }
 
-        rb.linearVelocity = new Vector2(direction * dashSpeed, rb.linearVelocity.y);
-
-        yield return new WaitForSeconds(dashDuration);
-
+        rb.gravityScale = originalGravity;
+        rb.linearVelocity = new Vector2(0, 0); // Complete stop
         isDashing = false;
 
         yield return new WaitForSeconds(dashCooldown);
-
         canDash = true;
     }
 

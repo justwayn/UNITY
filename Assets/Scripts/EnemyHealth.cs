@@ -27,6 +27,26 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{gameObject.name} defeated.");
-        Destroy(gameObject);
-    }
+        
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+            // Disable colliders and AI scripts to "show" the death
+            Collider2D[] colliders = GetComponents<Collider2D>();
+            foreach (var col in colliders) col.enabled = false;
+            
+            MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+            foreach (var script in scripts)
+            {
+                if (script != this) script.enabled = false;
+            }
+
+            Destroy(gameObject, 15f); // Delay destruction to show the animation
+            }
+            else
+            {
+            Destroy(gameObject, 15f);
+            }
+            }
 }
