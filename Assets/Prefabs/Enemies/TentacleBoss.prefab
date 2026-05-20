@@ -35,6 +35,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2102754586869623551}
+  - {fileID: 456996203803826968}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2443185069716217493
@@ -195,13 +196,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TentacleBossAI
   health: 5
-  moveSpeed: 2
-  frenzySpeed: 4
+  moveSpeed: 3
+  followSmoothing: 0.2
+  detectionRange: 18
+  attackRange: 8
+  attackCooldown: 2
   phase1ExposeTime: 3
   phase2ExposeTime: 1.5
   attackInterval: 1
   attackIntervalPhase2: 0.5
   currentPhase: 0
+  attackPoint: {fileID: 456996203803826968}
+  attackCircleRadius: 3.5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 1
+--- !u!1 &2867196309481339684
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 456996203803826968}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &456996203803826968
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2867196309481339684}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.5, y: 1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3457688297781163092}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8347029149277957392
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,6 +25,9 @@ public class PlayerCombat : MonoBehaviour
 
     void Update()
     {
+        // Don't process input if dead or game over
+        if (GameManager.Instance != null && GameManager.Instance.isGameOver) return;
+
         // Attack 1 (Left Click)
         if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
         {
@@ -42,15 +45,10 @@ public class PlayerCombat : MonoBehaviour
 
     void Attack(int step)
     {
-        if (step == 0)
+        if (animator != null)
         {
-            animator.ResetTrigger("Attack1");
-            animator.SetTrigger("Attack");
-        }
-        else
-        {
-            animator.ResetTrigger("Attack");
-            animator.SetTrigger("Attack1");
+            animator.SetInteger("AttackNum", step);
+            animator.SetTrigger("isAttacking");
         }
     }
 

@@ -192,8 +192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5236a0ef976136945ba780337abac3d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrystalEnemyAI
-  patrolRange: 3
-  moveSpeed: 2
-  chaseRange: 5
-  attackRange: 1.5
   health: 3
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 640
+  checkDistance: 1.5

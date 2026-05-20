@@ -1,0 +1,38 @@
+{
+    "asset": "1589aacfe8a8a4c4f861adc516f73868",
+    "fileName": "019e4370-fd1f-777d-8135-d93fbdffd6ef.png",
+    "prompt": "A bright glowing green button for a game UI. Rectangular shape with sharp edges and glowing arrows pointing inward on both sides. High visibility, active state button, game asset style on white background. No text.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "2eda4cb301e69304697c0ec4d3e06249",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

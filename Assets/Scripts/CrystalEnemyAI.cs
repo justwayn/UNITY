@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class CrystalEnemyAI : MonoBehaviour
 {
@@ -7,12 +6,30 @@ public class CrystalEnemyAI : MonoBehaviour
     private Animator animator;
     private bool isDead = false;
 
+    [Header("Ground Check")]
+    public LayerMask groundLayer;
+    public float checkDistance = 1f;
+    private bool isOnGround = false;
+
     void Start()
     {
         animator = GetComponent<Animator>();
     }
 
-    void Update() { }
+    void Update()
+    {
+        if (isDead) return;
+
+        // Use Raycast to check if it's on the ground, filtering only the Ground layer
+        // This prevents floating platforms (on other layers) from interfering
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, checkDistance, groundLayer);
+        isOnGround = hit.collider != null;
+
+        if (!isOnGround)
+        {
+            // Optional: Handle crystal logic if not on ground (e.g., fall or deactivate)
+        }
+    }
 
     public void TakeDamage(int damage = 1)
     {
@@ -23,7 +40,9 @@ public class CrystalEnemyAI : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
         isDead = true;
+        
         if (animator != null)
         {
             animator.speed = 1;
@@ -33,10 +52,14 @@ public class CrystalEnemyAI : MonoBehaviour
         Collider2D[] colliders = GetComponents<Collider2D>();
         foreach (var col in colliders) col.enabled = false;
 
-        TentacleBossAI[] allBosses = Object.FindObjectsByType<TentacleBossAI>(FindObjectsSortMode.None);
-        foreach (var boss in allBosses) boss.ShrinkDown();
+        // The TentacleBossAI will now check for remaining crystals in its own Update loop
+        // as requested, ensuring a more reliable death trigger.
+        Destroy(gameObject, 1.5f); 
+    }
 
-        // Ensure destruction is long enough to see animation
-        Destroy(gameObject, 15f); 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * checkDistance);
     }
 }

@@ -9,10 +9,12 @@ public class TentacleBossAI : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 2f;
-    public float frenzySpeed = 4f;
+    public float followSmoothing = 0.1f;
+    private float currentVelocityX;
 
     [Header("Combat Settings")]
     public float detectionRange = 12f;
+    public float attackRange = 8f;
     public float attackCooldown = 2f;
     public float phase1ExposeTime = 3f;
     public float phase2ExposeTime = 1.5f;
@@ -39,59 +41,105 @@ public class TentacleBossAI : MonoBehaviour
         bossCollider = GetComponent<Collider2D>();
         
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null) rb.bodyType = RigidbodyType2D.Kinematic;
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.simulated = true;
+        }
 
-        // Player can pass through tentacles
         if (bossCollider != null) bossCollider.isTrigger = true;
 
         Transform tip = transform.Find("TentacleTip");
         if (tip != null)
         {
             tipCollider = tip.GetComponent<Collider2D>();
-            tipCollider.enabled = false; // Start hidden
+            tipCollider.enabled = false;
         }
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) player = playerObj.transform;
     }
 
+    [Header("Attack Settings")]
+    public Transform attackPoint;
+    public float attackCircleRadius = 2f;
+    public LayerMask playerLayer;
+
     void Update()
     {
         if (isDead) return;
 
-        // Find player if not assigned
+        // CRITICAL: Check if all crystals are destroyed
+        if (Object.FindObjectsByType<CrystalEnemyAI>(FindObjectsSortMode.None).Length == 0)
+        {
+            Die();
+            return;
+        }
+
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
             if (playerObj != null) player = playerObj.transform;
+            return;
         }
 
-        if (player != null)
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
+        // STATIONARY: Tentacles stay in their position.
+        // Direct flip to ensure no "squishing" while tracking the player.
+        Vector3 currentScale = transform.localScale;
+        if (player.position.x > transform.position.x)
         {
-            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+            currentScale.x = Mathf.Abs(currentScale.x);
+        }
+        else
+        {
+            currentScale.x = -Mathf.Abs(currentScale.x);
+        }
+        transform.localScale = currentScale;
 
-            // Flip to face player
-            Vector3 localScale = transform.localScale;
-            if (player.position.x > transform.position.x)
-            {
-                // Player is on the right, ensure scale.x is positive
-                localScale.x = Mathf.Abs(localScale.x);
-            }
-            else
-            {
-                // Player is on the left, ensure scale.x is negative
-                localScale.x = -Mathf.Abs(localScale.x);
-            }
-            transform.localScale = localScale;
+        // Sync attack point flip
+        if (attackPoint != null)
+        {
+            Vector3 apPos = attackPoint.localPosition;
+            apPos.x = (transform.localScale.x > 0) ? Mathf.Abs(apPos.x) : -Mathf.Abs(apPos.x);
+            attackPoint.localPosition = apPos;
+        }
 
-            // Attack if in range
-            if (distanceToPlayer <= detectionRange)
+        // Attack if in range
+        if (distanceToPlayer <= detectionRange)
+        {
+            if (Time.time >= lastAttackTime + attackCooldown)
             {
-                if (Time.time >= lastAttackTime + attackCooldown)
-                {
-                    Attack();
-                }
+                Attack();
             }
+        }
+    }
+
+    // Called via Animation Event for smooth, accurate damage placement
+    public void DealDamage()
+    {
+        if (attackPoint == null) return;
+
+        Collider2D hit = Physics2D.OverlapCircle(attackPoint.position, attackCircleRadius, playerLayer);
+        if (hit != null)
+        {
+            PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(1);
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        if (attackPoint != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(attackPoint.position, attackCircleRadius);
         }
     }
 
@@ -108,39 +156,7 @@ public class TentacleBossAI : MonoBehaviour
     public void ShrinkDown()
     {
         if (isDead) return;
-        Die(); // Play death animation instead of shrinking
-    }
-
-    IEnumerator ShrinkRoutine()
-    {
-        // This routine is now bypassed by ShrinkDown calling Die() directly
-        yield break;
-    }
-
-    IEnumerator BossBehaviorLoop()
-    {
-        while (!isDead && currentPhase != BossPhase.Frenzy)
-        {
-            int attackCount = 3;
-            float interval = (currentPhase == BossPhase.Phase1) ? attackInterval : attackIntervalPhase2;
-
-            for (int i = 0; i < attackCount; i++)
-            {
-                animator.SetTrigger("Attack");
-                yield return new WaitForSeconds(interval);
-            }
-
-            // Expose Core
-            isExposed = true;
-            if (tipCollider != null) tipCollider.enabled = true;
-            spriteRenderer.color = Color.white; // Ensure normal color
-
-            float exposeDuration = (currentPhase == BossPhase.Phase1) ? phase1ExposeTime : phase2ExposeTime;
-            yield return new WaitForSeconds(exposeDuration);
-
-            isExposed = false;
-            if (tipCollider != null) tipCollider.enabled = false;
-        }
+        Die();
     }
 
     public void TakeDamage(int damage = 1)
@@ -150,18 +166,9 @@ public class TentacleBossAI : MonoBehaviour
         health -= damage;
         StartCoroutine(HurtFlash());
 
-        if (health <= 0)
-        {
-            Die();
-        }
-        else if (health <= 1)
-        {
-            currentPhase = BossPhase.Frenzy;
-        }
-        else if (health <= 3)
-        {
-            currentPhase = BossPhase.Phase2;
-        }
+        if (health <= 0) Die();
+        else if (health <= 1) currentPhase = BossPhase.Frenzy;
+        else if (health <= 3) currentPhase = BossPhase.Phase2;
     }
 
     IEnumerator HurtFlash()
@@ -173,6 +180,7 @@ public class TentacleBossAI : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
         isDead = true;
         if (animator != null)
         {
@@ -183,25 +191,19 @@ public class TentacleBossAI : MonoBehaviour
         if (bossCollider != null) bossCollider.enabled = false;
         if (tipCollider != null) tipCollider.enabled = false;
 
-        // 4d. Exit Boss Mode
         if (BossCameraController.Instance != null)
-        {
             BossCameraController.Instance.ExitBossMode();
-        }
 
-        // Keep death sprite visible
-        Destroy(gameObject, 15f);
-        }
+        Destroy(gameObject, 2f);
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isDead)
         {
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(1);
-            }
+            if (playerHealth != null) playerHealth.TakeDamage(1);
         }
     }
 }
+

@@ -1,0 +1,38 @@
+{
+    "asset": "7c2f200285df6ae49a454d91cdaca137",
+    "fileName": "019e4370-25a8-7206-bdc6-69795ea44703.png",
+    "prompt": "A dark, atmospheric bioluminescent forest background for a game main menu. Deep green misty woods with glowing mushrooms and ancient gnarled trees. Eerie but magical aesthetic, high detail, stylized art matching the provided reference. 16:9 aspect ratio style.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "2eda4cb301e69304697c0ec4d3e06249",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

@@ -1,0 +1,38 @@
+{
+    "asset": "95e727cb269ff5c4b85c1dadc276e845",
+    "fileName": "019e4370-27f7-7439-bf6a-cb88a585e580.png",
+    "prompt": "A large dark wooden board with thick vines and green glowing bioluminescent tech elements. A frame for a game menu, centered, game asset style on white background. Exact same design as the center frame in the reference image. No text.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": [
+            {
+                "doodleReferenceType": 7,
+                "doodle": [],
+                "label": "Image",
+                "strength": 0.25,
+                "invertStrength": false,
+                "assetReferenceGuid": "2eda4cb301e69304697c0ec4d3e06249",
+                "unlabeledIndex": -1
+            }
+        ]
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

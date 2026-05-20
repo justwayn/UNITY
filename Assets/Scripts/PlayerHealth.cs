@@ -28,11 +28,21 @@ public class PlayerHealth : MonoBehaviour
     private PlayerCombat playerCombat;
     private BoxCollider2D boxCollider;
 
+    private Vector3 spawnPoint;
+
+    private float originalGravityScale;
+
     void Start()
     {
         currentHealth = maxHealth;
+        spawnPoint = transform.position;
 
         rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            originalGravityScale = rb.gravityScale;
+        }
+
         playerController = GetComponent<PlayerController>();
         playerCombat = GetComponent<PlayerCombat>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -58,7 +68,6 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            boxCollider.enabled = false;
             StartCoroutine(DieRoutine());
             return;
         }
@@ -87,16 +96,12 @@ public class PlayerHealth : MonoBehaviour
 
         Debug.Log("Defeat triggered by PlayerHealth");
 
-        if (playerController != null)
-            playerController.enabled = false;
-
-        if (playerCombat != null)
-            playerCombat.enabled = false;
+        if (GameManager.Instance != null)
+             GameManager.Instance.isGameOver = true;
 
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
-            rb.gravityScale = 0f;
             rb.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
@@ -108,12 +113,36 @@ public class PlayerHealth : MonoBehaviour
 
         yield return new WaitForSeconds(defeatAnimationTime);
 
-        Debug.Log("Player defeated");
+        Respawn();
+    }
 
+    void Respawn()
+    {
+        isDead = false;
         if (GameManager.Instance != null)
+             GameManager.Instance.isGameOver = false;
+
+        currentHealth = maxHealth;
+        UpdateHealthBar();
+
+        transform.position = spawnPoint;
+
+        if (rb != null)
         {
-            GameManager.Instance.TriggerGameOver("Player Health Depleted");
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            rb.linearVelocity = Vector2.zero;
+            rb.gravityScale = originalGravityScale; // RESTORE ORIGINAL GRAVITY
         }
+
+        if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
+        }
+
+        boxCollider.enabled = true;
+        
+        Debug.Log("Player Respawned");
     }
 
     void UpdateHealthBar()

@@ -18,6 +18,12 @@ public class EnemyHealth : MonoBehaviour
 
         Debug.Log($"{gameObject.name} took {damage} damage. HP left: {currentHealth}");
 
+        Animator animator = GetComponent<Animator>();
+        if (animator != null && currentHealth > 0)
+        {
+            animator.SetTrigger("Damage");
+        }
+
         if (currentHealth <= 0)
         {
             Die();
@@ -28,25 +34,55 @@ public class EnemyHealth : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} defeated.");
         
+        // Prevent falling
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.gravityScale = 0;
+            rb.bodyType = RigidbodyType2D.Kinematic;
+        }
+
         Animator animator = GetComponent<Animator>();
+        bool hasDieAnimation = false;
+        
         if (animator != null)
         {
-            animator.SetTrigger("Die");
-            // Disable colliders and AI scripts to "show" the death
-            Collider2D[] colliders = GetComponents<Collider2D>();
-            foreach (var col in colliders) col.enabled = false;
-            
-            MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
-            foreach (var script in scripts)
+            foreach (var parameter in animator.parameters)
             {
-                if (script != this) script.enabled = false;
+                if (parameter.name == "Die")
+                {
+                    hasDieAnimation = true;
+                    break;
+                }
             }
+        }
 
-            Destroy(gameObject, 15f); // Delay destruction to show the animation
-            }
-            else
-            {
-            Destroy(gameObject, 15f);
-            }
-            }
+        if (hasDieAnimation)
+        {
+            animator.SetTrigger("Die");
+            DisableEnemy();
+            Destroy(gameObject, 2f); // Reduced from 15s to be more reasonable
+        }
+        else
+        {
+            DisableEnemy();
+            Destroy(gameObject);
+        }
+    }
+
+    private void DisableEnemy()
+    {
+        Collider2D[] colliders = GetComponents<Collider2D>();
+        foreach (var col in colliders) col.enabled = false;
+        
+        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+        foreach (var script in scripts)
+        {
+            if (script != this) script.enabled = false;
+        }
+        
+        // Disable this script too so it's not counted by HUD/LevelManager
+        this.enabled = false;
+    }
 }

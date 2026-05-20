@@ -4,14 +4,14 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float speed = 5f;
-    public float jumpForce = 7f;
+    public float speed = 8f;
+    public float jumpForce = 12f;
 
     [Header("Jump")]
     public int maxJumps = 2;
 
     [Header("Dash")]
-    public float dashSpeed = 20f;
+    public float dashSpeed = 40f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 0.5f;
 
@@ -24,6 +24,11 @@ public class PlayerController : MonoBehaviour
 
     private float moveInput;
     private int jumpCount;
+
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.2f;
+    public LayerMask groundLayer;
 
     private bool isGrounded;
     private bool isFacingRight = true;
@@ -51,10 +56,23 @@ public class PlayerController : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.simulated = true;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-    }
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate; // SMOOTH CAMERA FOLLOW
+        }
 
     void Update()
     {
+        // Don't process input if dead or game over
+        if (GameManager.Instance != null && GameManager.Instance.isGameOver) return;
+
+        // Reliable Ground Check using OverlapCircle
+        bool wasGrounded = isGrounded;
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        
+        if (isGrounded && !wasGrounded)
+        {
+            jumpCount = 0;
+        }
+
         moveInput = Input.GetAxisRaw("Horizontal");
 
         HandleFlip();
@@ -63,6 +81,8 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetFloat("speed", Mathf.Abs(moveInput));
             animator.SetBool("isJumping", !isGrounded);
+            animator.SetBool("isGrounded", isGrounded);
+            animator.SetBool("isRunning", Mathf.Abs(moveInput) > 0.1f && isGrounded);
         }
 
         HandleDash();
@@ -75,7 +95,12 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDashing) return;
+        if (isDashing || (GameManager.Instance != null && GameManager.Instance.isGameOver))
+        {
+             if (isDashing) return;
+             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+             return;
+        }
 
         rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
     }
@@ -84,12 +109,11 @@ public class PlayerController : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         jumpCount++;
-        isGrounded = false;
     }
 
     void HandleDash()
     {
-        if (!canDash) return;
+        if (!canDash || (GameManager.Instance != null && GameManager.Instance.isGameOver)) return;
 
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {

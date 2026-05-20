@@ -66,10 +66,10 @@ public class EnemyPatrol : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+        if (player == null || !enabled) return;
 
         if (isAttacking)
-        {
+{
             SetWalking(false);
             return;
         }

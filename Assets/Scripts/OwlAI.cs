@@ -46,7 +46,7 @@ public class OwlAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null || isAttacking) return;
+        if (player == null || isAttacking || !enabled) return;
 
         Hover();
 
